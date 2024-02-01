@@ -1,67 +1,60 @@
 function deepComp (argument1, argument2) {
     let result;
-    
-    function objectToArray (obj) {
-        let arr = Object.entries(obj).sort();
-        for (let i = 0; i<arr.length; i++) {
-            if (typeof arr[i][1] === 'object' && 
-                !Array.isArray(arr[i][1]) && 
-                arr[i][1] !== null
-                ) {
-                arr[i][1] = objectToArray (arr[i][1]);
+
+    if (typeof argument1 !== typeof argument2) {
+        result = false;
+    } else if (typeof argument1 === 'number' && 
+               typeof argument2 === 'number' && 
+               isNaN(argument1) && 
+               isNaN(argument2)) {
+        result = true;
+    } else if (argument1 === null || argument2 === null) {
+        result = (argument1 === argument2);
+    } else if (Array.isArray(argument1) && Array.isArray(argument2)) {
+        result = true;
+        if (argument1.length !== argument2.length) {
+            result =false;
+        }
+        for (let i=0; i<argument1.length; i++) {
+            if (typeof argument1[i] === "object" && typeof argument2[i] === "object" ||
+                typeof argument1[i] === "number" && typeof argument2[i] === "number") {
+                if ( !deepComp (argument1[i], argument2[i]) ) {
+                    result =false;
+                    break;
+                } else {
+                    continue;
+                }
+            }
+            if (argument1[i] !== argument2[i]) {
+                result =false;
+                break;
             }
         }
-        return arr;
-    }
-    
-    function arrayComp (arr1, arr2) {
-
-        let equalArrays = true;
-
-        if (arr1.length !== arr2.length) {
-            equalArrays = false;
+    } else if (typeof argument1 === "object" && typeof argument2 === "object" 
+               && !Array.isArray(argument1) && !Array.isArray(argument2) ) {
+        if (Object.keys(argument1).length !== Object.keys(argument2).length) {
+            result = false;
         } else {
-            for (let i = 0; i<arr1.length; i++) {
-                if (Array.isArray(arr1[i]) && Array.isArray(arr2[i])) {
-                    if(!arrayComp (arr1[i], arr2[i])) {
-                        equalArrays = false;
+            result = true;
+            for (let key1 in argument1) {
+                if (typeof argument1[key1] === "object" && typeof argument2[key1] === "object" ||
+                    typeof argument1[key1] === "number" && typeof argument2[key1] === "number") {
+                    if ( !deepComp (argument1[key1], argument2[key1]) ){
+                        result = false;
                         break;
+                    } else {
+                        continue;
                     }
-                } else if ( typeof arr1[i] === 'number' && 
-                            typeof arr2[i] === 'number' && 
-                            isNaN(arr1[i]) && 
-                            isNaN(arr2[i]) 
-                            ) {
-                    continue;
-                } else if (arr1[i] !== arr2[i]) {
-                    equalArrays = false;
+                }
+                if ( !(key1 in argument2) || argument1[key1] !== argument2[key1]) {
+                    result = false;
                     break;
                 }
             }
         }
-
-        return equalArrays;
-    }
-
-    if (typeof argument1 === 'object' && argument1 !== null && !Array.isArray(argument1)) {
-        argument1 = objectToArray (argument1);
-    }
-    if (typeof argument2 === 'object' && argument2 !== null && !Array.isArray(argument2)) {
-        argument2 = objectToArray (argument2);
-    }
-    
-    if ( Array.isArray(argument1) && Array.isArray(argument2) ) {
-        result = arrayComp (argument1, argument2); 
-    } else if ( typeof argument1 === 'number' && 
-                typeof argument2 === 'number' && 
-                isNaN(argument1) && 
-                isNaN(argument2) 
-                ) {
-                    result = true;
     } else {
-                result = (argument1 === argument2);
-            }
-        
+        result = (argument1 === argument2);
+    }    
     return result;
 }
 
