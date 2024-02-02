@@ -3,8 +3,7 @@ function deepComp (argument1, argument2) {
 
     if (typeof argument1 !== typeof argument2) {
         result = false;
-    } else if (typeof argument1 === 'number' && 
-               typeof argument2 === 'number' && 
+    } else if (typeof argument1 === 'number' &&  
                isNaN(argument1) && 
                isNaN(argument2)) {
         result = true;
@@ -30,8 +29,8 @@ function deepComp (argument1, argument2) {
                 break;
             }
         }
-    } else if (typeof argument1 === "object" && typeof argument2 === "object" 
-               && !Array.isArray(argument1) && !Array.isArray(argument2) ) {
+    } else if ( typeof argument1 === "object" && 
+                !Array.isArray(argument1) && !Array.isArray(argument2) ) {
         if (Object.keys(argument1).length !== Object.keys(argument2).length) {
             result = false;
         } else {
